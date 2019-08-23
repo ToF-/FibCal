@@ -5,21 +5,25 @@ import Data.Char
 data Color = Black | Purple | Green | Blue | Red | Orange
     deriving (Show)
 
-data Direction = D_Right | D_Up | D_Left | D_Down
+colors = cycle [Black, Purple, Green, Blue, Red, Orange]
+
+data Direction = R | U | L | D
     deriving (Eq,Show)
 
 type Coord = (Integer, Integer)
 
 
-fibCal :: Show a => [a] -> [Color] -> [String]
-fibCal xs cs = map showNode (zip3 xs cs [(0,0),(0,1)])
+fibCal :: Show a => Integer -> [a] -> [Color] -> [String]
+fibCal n xs cs = zipWith number (concatMap showNodes $ zip3 xs cs $ squares $ map fib [1..n]) [1..]
     where
-    showNode (n,c,coords) = 
+    showNodes (n,c,sq) = map (showNode n c) sq
+    showNode n c coords = 
         "\\node[draw,circle,color="
         ++ (map toLower . show) c 
         ++ ",minimum size=0.9cm,inner sep=0pt] at "
         ++ show coords
-        ++" {$"++ show n ++"$};"
+
+    number s n = s ++" {$"++ show n ++"$};"
 
 square :: Coord -> Integer -> (Direction, Direction) -> [Coord]
 square (x,y) 1 _ = [(x,y)]
@@ -29,22 +33,26 @@ square (x,y) n (d, e) = concat (extract n (map (advance e)) (extract n (advance 
     extract n f t = take (fromIntegral n) (iterate f t)
      
 advance :: Direction -> Coord -> Coord 
-advance D_Right (x,y) = (x+1,y)
-advance D_Left  (x,y) = (x-1,y)
-advance D_Up    (x,y) = (x,y+1)
-advance D_Down  (x,y) = (x,y-1)
+advance R (x,y) = (x+1,y)
+advance L  (x,y) = (x-1,y)
+advance U    (x,y) = (x,y+1)
+advance D  (x,y) = (x,y-1)
 
 nextDirection :: (Direction, Direction) -> (Direction, Direction)
-nextDirection (D_Right, D_Up)  = (D_Up, D_Left)
-nextDirection (D_Up, D_Left)   = (D_Left, D_Down)
-nextDirection (D_Left, D_Down) = (D_Down,D_Right)
-nextDirection (D_Down,D_Right) = (D_Right, D_Up)
+nextDirection (R, U)  = (U, L)
+nextDirection (U, L)   = (L, D)
+nextDirection (L, D) = (D,R)
+nextDirection (D,R) = (R, U)
 
 
-squares :: [(Direction,Direction)] -> [Integer] -> [[Coord]]
-squares ds ns = foldl addSquare [[(0,0)]] (zip ds ns)
+squares :: [Integer] -> [[Coord]]
+squares ns = snd $ foldl addSquare ((U,L), [[(0,0)]]) ns
     where
-    addSquare :: [[Coord]] -> ((Direction,Direction),Integer) -> [[Coord]]
-    addSquare acc ((dx,dy),n) = acc ++ [square (advance dx l) n (dx,dy)]
+    addSquare :: ((Direction,Direction), [[Coord]]) -> Integer -> ((Direction,Direction),[[Coord]])
+    addSquare ((d1,d2),acc) n = (nextDirection (d1,d2),acc ++ [square (advance d1 l) n (d1,d2)])
         where 
         l = last (last acc) 
+
+fib 0 = 1
+fib 1 = 1
+fib n = fib (n-1) + fib (n-2)
