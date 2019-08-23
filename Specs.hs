@@ -21,7 +21,13 @@ main = hspec $ do
 
     describe "square" $ do
         it "given an origin, size and direction, yields coords" $ do
-            square (0,0) 1 (D_Right, D_Up)  `shouldBe` [[(0,0)]]
-            square (17,42) 1 (D_Right, D_Up)  `shouldBe` [[(17,42)]]
-            square (0,0) 2 (D_Right, D_Up) `shouldBe` [[(0,0),(1,0)],[(0,1),(1,1)]]
-            square (0,0) 2 (D_Up,D_Left) `shouldBe` [[(0,0),(0,1)],[(-1,0),(-1,1)]]
+            square (0,0) 1 (D_Right, D_Up)  `shouldBe` [(0,0)]
+            square (17,42) 1 (D_Right, D_Up)  `shouldBe` [(17,42)]
+            square (0,0) 2 (D_Right, D_Up) `shouldBe` [(0,0),(1,0),(0,1),(1,1)]
+            square (0,0) 2 (D_Up,D_Left) `shouldBe` [(0,0),(0,1),(-1,0),(-1,1)]
+
+
+    describe "squares" $ do
+        it "given a list of directions and a list of sizes, yields a list of list of coords" $ do
+            squares [(D_Right,D_Up),(D_Left,D_Down)] [1,2] `shouldBe` 
+                [[(0,0)],[(0,1)],[(-1,1),(-2,1),(-1,0),(-2,0)]] 
