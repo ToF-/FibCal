@@ -5,7 +5,7 @@ data Color = Red | Green | Blue | Cyan | Magenta | Yellow | Black | Gray | Darkg
     deriving (Show)
 
 colors = cycle [Black, Purple, Green, Blue, Red, Orange]
-realColors = cycle [Orange,Purple,Green,Teal,Cyan,Blue,Purple,Brown]
+realColors = cycle [Orange,Purple,Brown,Teal,Cyan,Blue,Violet,Darkgray]
 
 data Direction = R | U | L | D
     deriving (Eq,Show)
