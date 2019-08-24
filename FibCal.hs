@@ -1,11 +1,11 @@
 module FibCal
 where
 import Data.Char
-
-data Color = Black | Purple | Green | Blue | Red | Orange
+data Color = Red | Green | Blue | Cyan | Magenta | Yellow | Black | Gray | Darkgray | Lightgray | Brown | Lime | Olive | Orange | Pink | Purple | Teal | Violet | White
     deriving (Show)
 
 colors = cycle [Black, Purple, Green, Blue, Red, Orange]
+realColors = cycle [Orange,Purple,Green,Teal,Cyan,Blue,Purple,Brown]
 
 data Direction = R | U | L | D
     deriving (Eq,Show)
@@ -13,24 +13,27 @@ data Direction = R | U | L | D
 type Coord = (Integer, Integer)
 
 
-fibCal :: Show a => Integer -> [a] -> [Color] -> [String]
-fibCal n xs cs = zipWith number (concatMap showNodes $ zip3 xs cs $ squares $ map fib [1..n]) [1..]
+fibCal :: Show a => Coord -> Integer -> [a] -> [Color] -> [String]
+fibCal origin n xs cs = zipWith number (concatMap showNodes $ zip3 xs cs $ squares $ map fib [1..n]) [1..]
     where
     showNodes (n,c,sq) = map (showNode n c) sq
     showNode n c coords = 
-        "\\node[draw,circle,color="
+        "\\node[draw,thick,circle,color="
         ++ (map toLower . show) c 
         ++ ",minimum size=0.9cm,inner sep=0pt] at "
-        ++ show coords
+        ++ show (translate origin coords)
 
     number s n = s ++" {$"++ show n ++"$};"
 
+    translate (i,j) (x,y) = (x+i,y+j)
+
 square :: Coord -> Integer -> (Direction, Direction) -> [Coord]
 square (x,y) 1 _ = [(x,y)]
+square (x,y) 21 (d, e) = concat (extract 21 (map (advance e)) (extract 5 (advance d) (x,y)))
 square (x,y) n (d, e) = concat (extract n (map (advance e)) (extract n (advance d) (x,y)))
-    where
-    extract :: Integer -> (a -> a) -> a -> [a]
-    extract n f t = take (fromIntegral n) (iterate f t)
+
+extract :: Integer -> (a -> a) -> a -> [a]
+extract n f t = take (fromIntegral n) (iterate f t)
      
 advance :: Direction -> Coord -> Coord 
 advance R (x,y) = (x+1,y)
