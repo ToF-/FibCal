@@ -4,7 +4,7 @@ import Data.Char
 data Color = Red | Green | Blue | Cyan | Magenta | Yellow | Black | Gray | Darkgray | Lightgray | Brown | Lime | Olive | Orange | Pink | Purple | Teal | Violet | White
     deriving (Show)
 
-colors = cycle [Black, Purple, Green, Blue, Red, Orange]
+colors = cycle [Black, Violet, Olive, Blue, Red, Orange, Teal, Brown]
 realColors = cycle [Orange,Purple,Brown,Teal,Cyan,Blue,Violet,Darkgray]
 
 data Direction = R | U | L | D
